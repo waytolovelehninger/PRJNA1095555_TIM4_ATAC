@@ -1,7 +1,9 @@
 #!/usr/bin/env Rscript
 # Input : $RESULTS/04_consensus/sample_by_common_peak.raw_fragment_counts.tsv, data/samples.tsv
 # Output: $RESULTS/05_deseq2/common_peak_Male_full_results.tsv, timd4_normalized_counts.tsv, common_peak_Male_dds.rds
-source(file.path(dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE))), "config.R"))
+.d <- { a <- grep("^--file=", commandArgs(FALSE), value = TRUE)   # Rscript, RStudio Source, or console
+  if (length(a)) dirname(sub("^--file=", "", a)) else if (!is.null(sys.frame(1)$ofile)) dirname(sys.frame(1)$ofile) else getwd() }
+source(file.path(.d, "config.R"))
 suppressPackageStartupMessages(library(DESeq2))
 out <- file.path(RESULTS, "05_deseq2"); dir.create(out, recursive = TRUE, showWarnings = FALSE)
 

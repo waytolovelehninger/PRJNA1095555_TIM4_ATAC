@@ -1,8 +1,10 @@
 #!/usr/bin/env Rscript
 # Input : $RESULTS/07_fig1B/matrix/TSS_2kb_50bp.male.mat.gz and logs (07_fig1B_bigwig.sh), 06_fig1A per-sample coverage
-# Output: $RESULTS/07_fig1B/figures/TSS_genomewide_heatmap_male_v3.png|pdf, results/genomewide_TSS_summary.tsv (Fig. 1B)
+# Output: $RESULTS/07_fig1B/figures/tss_genomewide_heatmap.png|pdf, results/genomewide_TSS_summary.tsv (Fig. 1B)
 options(stringsAsFactors = FALSE)
-source(file.path(dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE))), "config.R"))
+.d <- { a <- grep("^--file=", commandArgs(FALSE), value = TRUE)   # Rscript, RStudio Source, or console
+  if (length(a)) dirname(sub("^--file=", "", a)) else if (!is.null(sys.frame(1)$ofile)) dirname(sys.frame(1)$ofile) else getwd() }
+source(file.path(.d, "config.R"))
 out <- file.path(RESULTS, "07_fig1B")
 suppressPackageStartupMessages({ library(ComplexHeatmap); library(circlize); library(grid); library(ggplot2); library(patchwork) })
 dir.create(file.path(out, "results"), showWarnings = FALSE)
@@ -151,7 +153,7 @@ fig <- function() {
   grid.text(capt, x = unit(0.17, "in"), y = unit(1.32, "in"), just = c("left", "top"),
             gp = gpar(fontsize = 7.8, col = "grey30", lineheight = 1.1))
 }
-fb <- file.path(out, "figures/TSS_genomewide_heatmap_male_v3")
+fb <- file.path(out, "figures/tss_genomewide_heatmap")
 ragg::agg_png(paste0(fb, ".png"), width = W, height = H, units = "in", res = 300, background = "white"); fig(); invisible(dev.off())
 cairo_pdf(paste0(fb, ".pdf"), width = W, height = H, bg = "white"); fig(); invisible(dev.off())
 writeLines(capture.output(sessionInfo()), file.path(out, "results/sessionInfo.txt"))

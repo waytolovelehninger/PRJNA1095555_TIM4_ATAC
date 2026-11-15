@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Input : $RESULTS/04_consensus/sample_by_common_peak.raw_fragment_counts.tsv, data/samples.tsv
+# Input : $RESULTS/04_consensus/sample_by_common_peak.raw_fragment_counts.tsv and common_peaks.bed, data/samples.tsv, GTF
 # Output: $RESULTS/05_deseq2/common_peak_Male_full_results.tsv, timd4_normalized_counts.tsv, common_peak_Male_dds.rds
 .d <- { a <- grep("^--file=", commandArgs(FALSE), value = TRUE)   # Rscript, RStudio Source, or console
   if (length(a)) dirname(sub("^--file=", "", a)) else if (!is.null(sys.frame(1)$ofile)) dirname(sys.frame(1)$ofile) else getwd() }
@@ -18,7 +18,13 @@ res <- results(dds, contrast = c("age_group", "Old", "Young"), alpha = 0.05)
 write.table(as.data.frame(res), file.path(out, "common_peak_Male_full_results.tsv"), sep = "\t", quote = FALSE, col.names = NA)
 saveRDS(dds, file.path(out, "common_peak_Male_dds.rds"))
 
-timd4 <- "common_0010622"   # Timd4 TSS peak, chr11:46,810,221-46,812,849
+# Timd4 TSS peak = the consensus peak containing the Timd4 TSS (GENCODE M25)
+gtf <- rtracklayer::import(GTF, which = GRanges("chr11", IRanges(46700000, 46900000)))
+tx <- gtf[gtf$type == "transcript" & gtf$gene_name == "Timd4"]; stopifnot(length(tx) == 1L)
+tss <- if (as.character(strand(tx)) == "+") start(tx) else end(tx)
+bed <- read.delim(file.path(RESULTS, "04_consensus/common_peaks.bed"), header = FALSE, col.names = c("chr", "start0", "end0", "name"))
+timd4 <- bed$name[bed$chr == as.character(seqnames(tx)) & bed$start0 < tss & bed$end0 >= tss]
+if (length(timd4) != 1L) stop("expected exactly one consensus peak containing the Timd4 TSS, found ", length(timd4))
 write.table(data.frame(metric = "common_peak", feature_id = timd4, sample = md$run_accession, sex = "Male",
                        age_group = md$age_group, raw_count = counts(dds)[timd4, ],
                        normalized_count = counts(dds, normalized = TRUE)[timd4, ], size_factor = sizeFactors(dds)),

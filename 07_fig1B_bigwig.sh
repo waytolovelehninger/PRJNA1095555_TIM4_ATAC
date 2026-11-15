@@ -28,7 +28,7 @@ bam_of() { echo "$WORK/$1/filtered/$1.primary.filtered.bam"; }
 
 # sample, age group, size factor (male common-peak fit) from the male count table
 SF="$RESULTS/05_deseq2/timd4_normalized_counts.tsv"
-awk -F'\t' 'NR>1 && $1=="common_peak" && $2=="common_0010622" {print $3"\t"$5"\t"$8}' "$SF" | sort -k2,2r -k1,1 > "$HERE/samples.tsv"
+awk -F'\t' 'NR>1 && $1=="common_peak" {print $3"\t"$5"\t"$8}' "$SF" | sort -k2,2r -k1,1 > "$HERE/samples.tsv"
 [ "$(wc -l < "$HERE/samples.tsv")" -eq 9 ] || { echo "expected 9 male samples"; exit 1; }
 cat "$HERE/samples.tsv"
 

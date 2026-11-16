@@ -8,6 +8,7 @@
 3. `03_call_peaks.sh` – per-sample peaks
 4. `04_consensus_count.py` – consensus peaks, count matrix
 5. `05_deseq2.R` – differential accessibility (males)
+   - `05b_normalization_sensitivity.R` – Timd4 result under alternative size factors (TSS-proximal peaks; total counts in peaks)
 6. `06_fig1A_locus_track.R` – Fig. 1A
 7. `07_fig1B_bigwig.sh`, `07_fig1B_tss_heatmap.R` – Fig. 1B
 

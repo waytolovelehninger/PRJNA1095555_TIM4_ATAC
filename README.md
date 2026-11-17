@@ -9,12 +9,19 @@
 4. `04_consensus_count.py` – consensus peaks, count matrix
 5. `05_deseq2.R` – differential accessibility (males)
    - `05b_normalization_sensitivity.R` – Timd4 result under alternative size factors (TSS-proximal peaks; total counts in peaks)
+   - `05c_multimapping_sensitivity.py`, `05c_multimapping_sensitivity.R` – counts and DESeq2 repeated after removing fragments with an alternative alignment (XS tag in either mate), or only near-tied ones (AS − XS ≤ 5)
 6. `06_fig1A_locus_track.R` – Fig. 1A
 7. `07_fig1B_bigwig.sh`, `07_fig1B_tss_heatmap.R` – Fig. 1B
 
 **Software:** SRA Toolkit 3.4.1, NGmerge 0.3, Bowtie2 2.5.1, SAMtools 1.19.2, MACS2 2.2.7.1, DESeq2 1.46.0 (R 4.4.1), deepTools 3.5.5.
 
-`data/` contains consensus peaks, the male count matrix, DESeq2 results and the sample table.
+`data/` contains consensus peaks, the male count matrix, DESeq2 results, the sample table, the TSS BED used for Fig. 1B and 05b, and the summary of 05c (`multimapping_sensitivity.tsv`).
+
+**Reference files** (not included except the TSS BED; put them in `ref/` or set the paths in `config.sh` / `config.R`):
+- mm10 Bowtie2 index (`BT2_INDEX`): built locally with `bowtie2-build` 2.5.1 (default options, `--threads 4`) from the UCSC mm10 FASTA, https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/mm10.fa.gz (MD5 db005b65828db31735f384e4c5787be5, as listed in UCSC `md5sum.txt`; all 66 sequences used as provided).
+- ENCODE mm10 blacklist v2 (`BLACKLIST`): Boyle-Lab/Blacklist commit 61a04d2c5e49341d76735d485c61f0d1177d08a8, `lists/mm10-blacklist.v2.bed.gz`, decompressed; SHA-256 of the decompressed BED 9638bbeb4be8d99ddf56f1b70700f6a9336ce7f54d87032bd262465ecf3bfac7.
+- GENCODE vM25 GTF (`GTF`): https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz (SHA-256 e6c9704cb5832b8a1c71431ecac9ea30057377c72cdc9a12dc5d0405ab066d5a).
+- TSS BED (`TSS_BED`, `data/TSS.gencode_M25.protein_coding.unique.bed`, 21,830 rows, SHA-256 765466e737be790e4a79e25ab8b2979ae57980fe3afe5b1ba2473e306e244523): GENCODE vM25 `gene` features with `gene_type "protein_coding"` on chr1–19/X/Y; one TSS per gene at the gene boundary (start on + strand, end on − strand); genes sharing the same TSS position and strand collapsed into one row (16 rows list two gene IDs); TSSs whose ±2 kb window leaves the chromosome removed (none). The file was originally written by the pilot-sample QC script, which is not part of this repository; `make_tss_bed.py` is a re-implementation of that rule and reproduces the file byte-for-byte (`python3 make_tss_bed.py gencode.vM25.annotation.gtf.gz mm10.chrom.sizes > TSS.bed`).
 
 Details are described in the Methods of the associated manuscript.
 

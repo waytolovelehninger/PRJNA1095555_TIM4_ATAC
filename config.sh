@@ -11,6 +11,6 @@ export MACS2=${MACS2:-macs2}                             # 2.2.7.1
 export DEEPTOOLS_VENV=${DEEPTOOLS_VENV:-$HOME/deeptools_3.5.5}
 export BT2_INDEX=${BT2_INDEX:-$HERE_CFG/ref/mm10}        # Bowtie2 index prefix (mm10)
 export BLACKLIST=${BLACKLIST:-$HERE_CFG/ref/mm10-blacklist.v2.bed}
-export TSS_BED=${TSS_BED:-$HERE_CFG/ref/TSS.gencode_M25.protein_coding.unique.bed}
+export TSS_BED=${TSS_BED:-$HERE_CFG/data/TSS.gencode_M25.protein_coding.unique.bed}
 export THREADS=${THREADS:-10}
 RUNS=${RUNS:-$(tail -n +2 "$SAMPLES" | cut -f1)}

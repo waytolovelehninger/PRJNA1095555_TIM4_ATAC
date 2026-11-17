@@ -7,4 +7,4 @@ WORK    <- env("WORK", file.path(HERE, "work"))          # BAMs: WORK/<run>/filt
 RESULTS <- env("RESULTS", file.path(HERE, "results"))
 GTF     <- env("GTF", file.path(HERE, "ref/gencode.vM25.annotation.gtf.gz"))
 bam_path <- function(s) file.path(WORK, s, "filtered", paste0(s, ".primary.filtered.bam"))
-TSS_BED <- env("TSS_BED", file.path(HERE, "ref/TSS.gencode_M25.protein_coding.unique.bed"))   # one TSS per protein-coding gene
+TSS_BED <- env("TSS_BED", file.path(HERE, "data/TSS.gencode_M25.protein_coding.unique.bed"))   # one TSS per protein-coding gene

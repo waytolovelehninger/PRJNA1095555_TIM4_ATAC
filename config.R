@@ -8,3 +8,4 @@ RESULTS <- env("RESULTS", file.path(HERE, "results"))
 GTF     <- env("GTF", file.path(HERE, "ref/gencode.vM25.annotation.gtf.gz"))
 bam_path <- function(s) file.path(WORK, s, "filtered", paste0(s, ".primary.filtered.bam"))
 TSS_BED <- env("TSS_BED", file.path(HERE, "data/TSS.gencode_M25.protein_coding.unique.bed"))   # one TSS per protein-coding gene
+FIG_TEXT <- env("FIG_TEXT", "0") == "1"   # 1 = figure title, subtitle and caption as before; 0 (default) = without them, for submission

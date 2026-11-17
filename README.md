@@ -13,6 +13,8 @@
 6. `06_fig1A_locus_track.R` – Fig. 1A
 7. `07_fig1B_bigwig.sh`, `07_fig1B_tss_heatmap.R` – Fig. 1B
 
+Figures (06, 07): `FIG_TEXT=1` reproduces the earlier figures with title and caption; default draws figures without them for submission.
+
 **Software:** SRA Toolkit 3.4.1, NGmerge 0.3, Bowtie2 2.5.1, SAMtools 1.19.2, MACS2 2.2.7.1, DESeq2 1.46.0 (R 4.4.1), deepTools 3.5.5.
 
 `data/` contains consensus peaks, the male count matrix, DESeq2 results, the sample table, the TSS BED used for Fig. 1B and 05b, and the summary of 05c (`multimapping_sensitivity.tsv`).

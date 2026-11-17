@@ -119,8 +119,8 @@ make_track <- function(xlim, file_stem, title, step_kb) {
     scale_fill_manual(values = COL, guide = "none") + scale_colour_manual(values = COL, guide = "none") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.02)), limits = c(0, ymax), oob = scales::squish) +
     coord_cartesian(xlim = xlim, expand = FALSE) +
-    labs(y = "Normalized ATAC signal\n(fragment coverage ÷ size factor)", title = title,
-         subtitle = paste0("PRJNA1095555 ATAC-seq reanalysis, male peritoneal macrophages
+    labs(y = "Normalized ATAC signal\n(fragment coverage ÷ size factor)", title = if (FIG_TEXT) title,
+         subtitle = if (FIG_TEXT) paste0("PRJNA1095555 ATAC-seq reanalysis, male peritoneal macrophages
 ", stat_lab, "  (Old vs Young)")) +
     base_theme + theme(plot.title = element_text(face = "bold", size = 15),
                        plot.subtitle = element_text(size = 10.5, colour = "grey25"))
@@ -193,11 +193,15 @@ make_track <- function(xlim, file_stem, title, step_kb) {
     sprintf("Yellow band = %s (%s:%s–%s). Statistics: DESeq2 ~ age_group, male only (%d Young vs %d Old), BH over %s tested peaks.",
             timd4, tp$chr, fmt(tp$start0 + 1), fmt(tp$end0), sum(md$age_group == "Young"), sum(md$age_group == "Old"), fmt(sum(!is.na(res$padj)))),
     sep = "\n")
-  p <- p_cov / p_ov / p_pk / p_gene + plot_layout(heights = c(4.2, 1.6, 0.9, 0.9)) +
+  p <- p_cov / p_ov / p_pk / p_gene + plot_layout(heights = c(4.2, 1.6, 0.9, 0.9))
+  if (FIG_TEXT) p <- p +
     plot_annotation(caption = cap, theme = theme(plot.caption = element_text(hjust = 0, size = 8.5, colour = "grey30")))
+  # without title, subtitle and caption the page is shorter by their height (1.34 in, measured from the
+  # patchwork layout: fixed rows 2.39 in with the text, 1.05 in without), so the data panels keep the same size
+  FIG_H <- if (FIG_TEXT) 8.2 else 8.2 - 1.34
   ggsave(file.path(out, "figures", paste0(file_stem, ".png")), p, device = ragg::agg_png,
-         width = 9, height = 8.2, dpi = 300, bg = "white")
-  ggsave(file.path(out, "figures", paste0(file_stem, ".pdf")), p, device = cairo_pdf, width = 9, height = 8.2, bg = "white")
+         width = 9, height = FIG_H, dpi = 300, bg = "white")
+  ggsave(file.path(out, "figures", paste0(file_stem, ".pdf")), p, device = cairo_pdf, width = 9, height = FIG_H, bg = "white")
   cat("written", file_stem, "\n")
 }
 

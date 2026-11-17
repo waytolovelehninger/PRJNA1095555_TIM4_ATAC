@@ -95,7 +95,9 @@ xaxis <- function(fs = 8) {
 yp <- colMeans(Yk); op <- colMeans(Ok)
 yt <- pretty(c(0, max(yp, op))); yr <- range(yt)
 
-W <- 7; H <- 10.3                                         # inches
+W <- 7; H <- if (FIG_TEXT) 10.3 else 8.05                # inches; without title and caption the page is shorter
+HM_Y <- if (FIG_TEXT) 1.55 else 0.05                      # bottom of the heatmap viewport (above the caption when drawn)
+TOP <- if (FIG_TEXT) 0.75 else 0                          # space kept for the figure title
 CAP_CHARS <- 128                                          # caption wrap width at 7.8 pt for a 7-in page
 capt <- c(
   paste("Male peritoneal macrophages, PRJNA1095555 ATAC-seq reanalysis. One TSS per protein-coding gene (GENCODE M25), ±2 kb, 50-bp bins.",
@@ -114,10 +116,10 @@ title <- sprintf("Genome-wide TSS accessibility is unchanged with age;\nTim4 is 
 fig <- function() {
   grid.newpage()
   grid.rect(gp = gpar(fill = "white", col = NA))
-  grid.text(title, x = unit(0.17, "in"), y = unit(H - 0.2, "in"), just = c("left", "top"),
-            gp = gpar(fontsize = 13, fontface = "bold", lineheight = 1.1))
+  if (FIG_TEXT) grid.text(title, x = unit(0.17, "in"), y = unit(H - 0.2, "in"), just = c("left", "top"),
+                          gp = gpar(fontsize = 13, fontface = "bold", lineheight = 1.1))
   # heatmap
-  pushViewport(viewport(x = 0, y = unit(1.55, "in"), width = 1, height = unit(5.4, "in"), just = c("left", "bottom")))
+  pushViewport(viewport(x = 0, y = unit(HM_Y, "in"), width = 1, height = unit(5.4, "in"), just = c("left", "bottom")))
   draw(ht, newpage = FALSE, heatmap_legend_side = "right",
        column_title = "Distance from TSS (kb); rows = TSSs sorted by mean signal",
        column_title_side = "bottom", column_title_gp = gpar(fontsize = 9.5))
@@ -128,7 +130,7 @@ fig <- function() {
   stopifnot(abs(diff(lr$x) * 2.54 - HW_CM) < 1e-3)        # heatmap body is exactly HW_CM wide
   # profile directly above the heatmap: same left/right edges and the same +-2 kb scale
   PH <- 1.85; pb <- lr$y[2] + 0.75
-  stopifnot(pb + PH + 0.3 < H - 0.75)
+  stopifnot(pb + PH + 0.3 < H - TOP)
   pushViewport(viewport(x = unit(lr$x[1], "in"), y = unit(pb, "in"), width = unit(diff(lr$x), "in"), height = unit(PH, "in"),
                         just = c("left", "bottom"), xscale = c(-2, 2), yscale = yr, clip = "off"))
   grid.lines(unit(pos / 1000, "native"), unit(yp, "native"), gp = gpar(col = COL[["Young"]], lwd = 2))
@@ -150,8 +152,8 @@ fig <- function() {
   }
   popViewport()
   # caption
-  grid.text(capt, x = unit(0.17, "in"), y = unit(1.32, "in"), just = c("left", "top"),
-            gp = gpar(fontsize = 7.8, col = "grey30", lineheight = 1.1))
+  if (FIG_TEXT) grid.text(capt, x = unit(0.17, "in"), y = unit(1.32, "in"), just = c("left", "top"),
+                          gp = gpar(fontsize = 7.8, col = "grey30", lineheight = 1.1))
 }
 fb <- file.path(out, "figures/tss_genomewide_heatmap")
 ragg::agg_png(paste0(fb, ".png"), width = W, height = H, units = "in", res = 300, background = "white"); fig(); invisible(dev.off())
